@@ -1,0 +1,29 @@
+spring:
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: predicate_route
+#          uri: http://localhost:8080/test
+#          predicates:
+#            - Path=/topics/{topicName}
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    timeout: 60000
+    password: mypass
+
+client:
+  demo-gateway-client1:
+    url: http://localhost:8081
+  demo-gateway-client2:
+    url: http://localhost:8082
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, health
+
+server:
+  shutdown: graceful
