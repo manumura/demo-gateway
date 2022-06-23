@@ -2,12 +2,15 @@ package com.example.demo.config;
 
 import com.example.demo.dto.Topic;
 import com.example.demo.service.TopicService;
+import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.RedisConnectionFailureException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +34,22 @@ public class RouteConfig {
 
     List<String> services = List.of(SERVICE1_URL, SERVICE2_URL);
     for (String service: services) {
-      List<Topic> t = topicService.getTopicsByService(service);
-      if (t != null) {
-        t.forEach(topic -> {
-          topic.setService(SERVICE1_URL);
-        });
-        log.debug("client {} topics: {}", service, t);
-        topics.addAll(t);
+      try {
+        List<Topic> t = topicService.getTopicsByService(service);
+        if (t != null) {
+          t.forEach(topic -> {
+            topic.setService(service);
+          });
+          log.debug("client {} topics: {}", service, t);
+          topics.addAll(t);
+        }
+      } catch (Exception e) {
+        log.error("Cannot get topics from " + service);
       }
+    }
+
+    if (CollectionUtils.isEmpty(topics)) {
+      throw new RuntimeException("No topics found, cannot build routes !!");
     }
 
     RouteLocatorBuilder.Builder routeLocatorBuilder = builder.routes();
@@ -50,7 +61,11 @@ public class RouteConfig {
           .uri(topic.getService()));
     }
 
-    topicService.addTopicsToCache(topics);
+    try {
+      topicService.addTopicsToCache(topics);
+    } catch (Exception e) {
+      log.error("Could not add topics to cache", e);
+    }
 
     return routeLocatorBuilder.build();
   }

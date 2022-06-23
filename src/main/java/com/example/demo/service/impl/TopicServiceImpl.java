@@ -69,6 +69,7 @@ public class TopicServiceImpl implements TopicService {
             log.debug("Topics cached: {}", topicEntitiesCached);
         } catch (RedisConnectionFailureException | RedisException e) {
             log.error("Could not add topics to cache", e);
+            throw e;
         }
     }
 

@@ -3,6 +3,8 @@ server:
   shutdown: graceful
 
 spring:
+  application:
+    name: demo-gateway-client1
 #  cloud:
 #    gateway:
 #      routes:
@@ -36,4 +38,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: info, health
+        include: health, info, metrics
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}

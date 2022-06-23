@@ -22,32 +22,32 @@ import org.springframework.security.web.server.util.matcher.ServerWebExchangeMat
 public class WebSecurityConfig {
 
   private final ReactiveUserDetailsServiceImpl reactiveUserDetailsService;
-  private final GuacUserAuthenticator guacUserAuthenticator;
-  private final Oauth2UserAuthenticator oauth2UserAuthenticator;
+//  private final GuacUserAuthenticator guacUserAuthenticator;
+//  private final Oauth2UserAuthenticator oauth2UserAuthenticator;
 
-  // TODO remove: test no auth /config/topics
+  // TODO remove: test no auth required for /config/topics
   private static final String[] WHITELIST_ENDPOINTS = { "/config/topics", "/config/topics/*", "/config/types/*" };
 //  private static final String[] WHITELIST_ENDPOINTS = { "/config/topics/*", "/config/types/*" };
 
   public WebSecurityConfig(ReactiveUserDetailsServiceImpl reactiveUserDetailsService,
       GuacUserAuthenticator guacUserAuthenticator, Oauth2UserAuthenticator oauth2UserAuthenticator) {
     this.reactiveUserDetailsService = reactiveUserDetailsService;
-    this.guacUserAuthenticator = guacUserAuthenticator;
-    this.oauth2UserAuthenticator = oauth2UserAuthenticator;
+//    this.guacUserAuthenticator = guacUserAuthenticator;
+//    this.oauth2UserAuthenticator = oauth2UserAuthenticator;
   }
 
-  private AuthenticationWebFilter authenticationWebFilter() {
-    final AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(reactiveAuthenticationManager());
-    // Without this permitAllMatcher, all requests with token in header will be intercepted by authentication filter
-    final NegatedServerWebExchangeMatcher permitAllMatcher = new NegatedServerWebExchangeMatcher(
-        ServerWebExchangeMatchers.pathMatchers(WHITELIST_ENDPOINTS));
-    authenticationWebFilter.setRequiresAuthenticationMatcher(permitAllMatcher);
-    authenticationWebFilter.setServerAuthenticationConverter(new TokenAuthenticationConverter(
-        guacUserAuthenticator));
-    // Stateless
-    authenticationWebFilter.setSecurityContextRepository(NoOpServerSecurityContextRepository.getInstance());
-    return authenticationWebFilter;
-  }
+//  private AuthenticationWebFilter authenticationWebFilter() {
+//    final AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(reactiveAuthenticationManager());
+//    // Without this permitAllMatcher, all requests with token in header will be intercepted by authentication filter
+//    final NegatedServerWebExchangeMatcher permitAllMatcher = new NegatedServerWebExchangeMatcher(
+//        ServerWebExchangeMatchers.pathMatchers(WHITELIST_ENDPOINTS));
+//    authenticationWebFilter.setRequiresAuthenticationMatcher(permitAllMatcher);
+//    authenticationWebFilter.setServerAuthenticationConverter(new TokenAuthenticationConverter(
+//        guacUserAuthenticator));
+//    // Stateless
+//    authenticationWebFilter.setSecurityContextRepository(NoOpServerSecurityContextRepository.getInstance());
+//    return authenticationWebFilter;
+//  }
 
   @Bean
   public UserDetailsReactiveAuthenticationManager reactiveAuthenticationManager() {
@@ -72,7 +72,7 @@ public class WebSecurityConfig {
         .authorizeExchange()
         .matchers(EndpointRequest.to("health", "info"))
         .permitAll()
-        // TODO remove: test no auth
+        // TODO remove: test no auth required for /config/topics
 //        .and()
 //        .addFilterAt(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHORIZATION)
 //        .authorizeExchange()
