@@ -10,12 +10,12 @@ import reactor.core.publisher.Mono;
 
 public class TokenAuthenticationConverter implements ServerAuthenticationConverter {
 
-  private final GuacUserAuthenticator guacUserAuthenticator;
+  private final TokenUsernameExtractor tokenUsernameExtractor;
 
   private static final String BEARER = "Bearer ";
 
-  public TokenAuthenticationConverter(GuacUserAuthenticator guacUserAuthenticator) {
-    this.guacUserAuthenticator = guacUserAuthenticator;
+  public TokenAuthenticationConverter(TokenUsernameExtractor tokenUsernameExtractor) {
+    this.tokenUsernameExtractor = tokenUsernameExtractor;
   }
 
   @Override
@@ -26,14 +26,14 @@ public class TokenAuthenticationConverter implements ServerAuthenticationConvert
         .filter(header -> header.toLowerCase().startsWith(BEARER.toLowerCase()))
         .map(header -> header.substring(BEARER.length()))
         .filter(token -> !StringUtils.isBlank(token))
-        .flatMap(guacUserAuthenticator::getAuthentication)
+        .flatMap(tokenUsernameExtractor::getAuthentication)
         .filter(Objects::nonNull);
   }
 
   private String getTokenFromRequest(ServerWebExchange serverWebExchange) {
     String token = serverWebExchange.getRequest()
         .getHeaders()
-        .getFirst(Constant.GUAC_AUTHORIZATION_HEADER);
+        .getFirst(Constant.AUTHORIZATION_HEADER);
     return StringUtils.isBlank(token) ? "" : token;
   }
 }

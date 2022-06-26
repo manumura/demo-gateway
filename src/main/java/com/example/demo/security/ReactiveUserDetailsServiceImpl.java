@@ -1,6 +1,5 @@
 package com.example.demo.security;
 
-import com.example.demo.client.UserManagementClient;
 import com.example.demo.common.AuthenticatedUserData;
 import com.example.demo.common.UserData;
 import com.example.demo.constant.Constant;
@@ -17,15 +16,15 @@ import reactor.core.publisher.Mono;
 @Service
 public class ReactiveUserDetailsServiceImpl implements ReactiveUserDetailsService {
 
-    private final UserManagementClient userManagementClient;
+    private final UserService userService;
 
-    public ReactiveUserDetailsServiceImpl(UserManagementClient userManagementClient) {
-        this.userManagementClient = userManagementClient;
+    public ReactiveUserDetailsServiceImpl(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
     public Mono<UserDetails> findByUsername(String userName) {
-        return userManagementClient.getUserDetails(userName)
+        return userService.getUserDetails(userName)
             .filter(Objects::nonNull)
             .switchIfEmpty(Mono.error(new UsernameNotFoundException(String.format("User %s not found", userName))))
             .map(this::createPrincipalUser);
@@ -42,17 +41,11 @@ public class ReactiveUserDetailsServiceImpl implements ReactiveUserDetailsServic
                 Constant.NA,
                 authorities,
                 authenticatedUserData.getUuid(),
-                authenticatedUserData.getDriverUuid(),
                 authenticatedUserData.getFirstName(),
                 authenticatedUserData.getLastName(),
                 authenticatedUserData.getEmail(),
                 authenticatedUserData.getPhoneNumber(),
-                authenticatedUserData.getEnabled(),
-                authenticatedUserData.getProviders(),
-                authenticatedUserData.getBuCode(),
-                authenticatedUserData.getUserType(),
-                authenticatedUserData.getAuthorizationLevel(),
-                authenticatedUserData.isGeoAccepted()
+                authenticatedUserData.getEnabled()
         );
     }
 }

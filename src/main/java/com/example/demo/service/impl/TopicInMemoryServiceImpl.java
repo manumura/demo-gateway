@@ -1,35 +1,34 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.Topic;
+import com.example.demo.dto.TopicsInMemoryCache;
 import com.example.demo.entity.TopicEntity;
 import com.example.demo.mapper.TopicMapper;
 import com.example.demo.repository.TopicRepository;
 import com.example.demo.service.TopicService;
-import io.lettuce.core.RedisConnectionException;
 import io.lettuce.core.RedisException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class TopicServiceImpl implements TopicService {
+@Primary
+public class TopicInMemoryServiceImpl implements TopicService {
 
     private static final String TOPICS_PATH = "/config/topics";
 
-    private final TopicRepository topicRepository;
-
-    private final TopicMapper topicMapper;
+    private final TopicsInMemoryCache topicsInMemoryCache;
 
     @Override
     public List<Topic> getTopicsByService(String service) {
@@ -56,33 +55,23 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public void addTopicsToCache(List<Topic> topics) {
-        try {
-            // Delete first all topics
-            log.debug("Deleting topics from cache");
-            topicRepository.deleteAll();
+    public synchronized void addTopicsToCache(List<Topic> topics) {
+        // Delete first all topics
+        log.debug("Deleting topics from cache");
+        topicsInMemoryCache.getTopicsMap().clear();
 
-            log.debug("Topics to add to cache: {}", topics);
-            List<TopicEntity> topicEntitiesToCache = topicMapper.topicToTopicEntity(topics);
-
-            Iterable<TopicEntity> topicEntitiesCached = topicRepository.saveAll(topicEntitiesToCache);
-            log.debug("Topics cached: {}", topicEntitiesCached);
-        } catch (RedisConnectionFailureException | RedisException e) {
-            log.error("Could not add topics to cache", e);
-            throw e;
+        log.debug("Topics to add to cache: {}", topics);
+        for (Topic t : topics) {
+            topicsInMemoryCache.getTopicsMap().put(t.getCode(), t);
         }
+
+        log.debug("Topics cached: {}", topics);
     }
 
     @Override
     public List<Topic> getTopicsFromCache() {
-        try {
-            final List<TopicEntity> topicEntities = IterableUtils.toList(topicRepository.findAll());
-            final List<Topic> topics = topicMapper.topicEntityToTopic(topicEntities);
-            log.info("gateway topics {}", topics);
-            return topics;
-        } catch (RedisConnectionFailureException | RedisException e) {
-            log.error("Could not get topics from cache", e);
-            return new ArrayList<>();
-        }
+        List<Topic> topics = new ArrayList<>(topicsInMemoryCache.getTopicsMap().values());
+        log.info("gateway topics {}", topics);
+        return topics;
     }
 }

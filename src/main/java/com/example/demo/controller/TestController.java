@@ -25,15 +25,25 @@ public class TestController {
 
   private final TopicService topicService;
 
-  @GetMapping("/config/topics")
+  @GetMapping("/admin/config/topics")
   public ResponseEntity<List<Topic>> getTopics() {
     final List<Topic> topics = topicService.getTopicsFromCache();
     return ResponseEntity.ok(topics);
   }
 
+  @GetMapping("/super-admin/message")
+  public ResponseEntity<String> getProtectedMessage() {
+    return ResponseEntity.ok("super admin endpoint reachable");
+  }
+
+  @GetMapping("/public/message")
+  public ResponseEntity<String> getMessage() {
+    return ResponseEntity.ok("public endpoint reachable");
+  }
+
   // TODO test
-  @GetMapping("/test")
-  public ResponseEntity<UserData> test(Principal principal) {
+  @GetMapping("/user")
+  public ResponseEntity<UserData> user(Principal principal) {
 
     System.out.println("authenticated user: " + getUserFromSecurityContext());
 
@@ -45,15 +55,15 @@ public class TestController {
     return ResponseEntity.ok(user);
   }
 
-  @GetMapping("/test2")
-  public Mono<UserData> test2() {
+  @GetMapping("/user2")
+  public Mono<UserData> user2() {
 
     return ReactiveSecurityContextHolder.getContext()
         .map(SecurityContext::getAuthentication)
         .map(Authentication::getPrincipal)
         .cast(UserData.class)
-        .doOnNext(u -> {
-          System.out.println("u " + u);
+        .doOnNext(user -> {
+          System.out.println("user2 " + user);
         });
   }
 

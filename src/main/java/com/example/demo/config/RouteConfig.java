@@ -6,11 +6,13 @@ import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.RedisConnectionFailureException;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +50,7 @@ public class RouteConfig {
       }
     }
 
+    // TODO implement retry
     if (CollectionUtils.isEmpty(topics)) {
       throw new RuntimeException("No topics found, cannot build routes !!");
     }
@@ -69,6 +72,16 @@ public class RouteConfig {
 
     return routeLocatorBuilder.build();
   }
+
+//  @Bean
+//  public GlobalFilter globalAuthenticationFilter() {
+//    return (exchange, chain) -> {
+//      System.out.println("First Global filter");
+//      return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+//        System.out.println("Second Global filter");
+//      }));
+//    };
+//  }
 
 //  @Bean
 //  public HttpClient httpClient() {

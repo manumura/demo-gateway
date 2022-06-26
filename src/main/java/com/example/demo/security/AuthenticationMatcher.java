@@ -12,9 +12,9 @@ public class AuthenticationMatcher implements ServerWebExchangeMatcher {
   public Mono<MatchResult> matches(final ServerWebExchange exchange) {
     Mono<ServerHttpRequest> request = Mono.just(exchange).map(ServerWebExchange::getRequest);
 
-    /* Check for header "GUAC-Authorization" */
+    /* Check for header "Authorization" */
     return request.map(ServerHttpRequest::getHeaders)
-        .filter(h -> h.containsKey(Constant.GUAC_AUTHORIZATION_HEADER))
+        .filter(h -> h.containsKey(Constant.AUTHORIZATION_HEADER))
         .flatMap(h -> MatchResult.match())
         .switchIfEmpty(MatchResult.notMatch());
   }
