@@ -1,6 +1,6 @@
 package com.example.demo.config;
 
-import com.example.demo.dto.Client;
+import com.example.demo.properties.Client;
 import com.example.demo.dto.Topic;
 import com.example.demo.properties.ApplicationProperties;
 import com.example.demo.service.TopicService;
@@ -38,7 +38,7 @@ public class RouteConfig {
 
     List<Topic> topics = new ArrayList<>();
     for (Client client : applicationProperties.getClients()) {
-      // Path-based based route
+      // Path-based route
       log.debug("Creating route: path {} -> {}", client.getName(), client.getUrl());
       routeLocatorBuilder.route(r -> r.path("/" + client.getName() + "/**")
               // strip prefix
@@ -56,7 +56,7 @@ public class RouteConfig {
           topics.addAll(t);
         }
       } catch (Exception e) {
-        log.error("Cannot get topics from " + client.getUrl());
+        log.error("Cannot get topics from " + client.getUrl(), e);
       }
     }
 

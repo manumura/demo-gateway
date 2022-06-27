@@ -1,7 +1,7 @@
 package com.example.demo.security;
 
-import com.example.demo.common.AuthenticatedUserData;
-import com.example.demo.common.UserData;
+import com.example.demo.dto.AuthenticatedUser;
+import com.example.demo.dto.User;
 import com.example.demo.constant.Constant;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,22 +30,22 @@ public class ReactiveUserDetailsServiceImpl implements ReactiveUserDetailsServic
             .map(this::createPrincipalUser);
     }
 
-    private UserData createPrincipalUser(AuthenticatedUserData authenticatedUserData) {
+    private User createPrincipalUser(AuthenticatedUser authenticatedUser) {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
-        for (String authority : authenticatedUserData.getAuthorities()) {
+        for (String authority : authenticatedUser.getAuthorities()) {
             authorities.add(new SimpleGrantedAuthority(authority));
         }
-        return new UserData(
-                authenticatedUserData.getUsername(),
+        return new User(
+                authenticatedUser.getUsername(),
                 Constant.NA,
                 authorities,
-                authenticatedUserData.getUuid(),
-                authenticatedUserData.getFirstName(),
-                authenticatedUserData.getLastName(),
-                authenticatedUserData.getEmail(),
-                authenticatedUserData.getPhoneNumber(),
-                authenticatedUserData.getEnabled()
+                authenticatedUser.getUuid(),
+                authenticatedUser.getFirstName(),
+                authenticatedUser.getLastName(),
+                authenticatedUser.getEmail(),
+                authenticatedUser.getPhoneNumber(),
+                authenticatedUser.getEnabled()
         );
     }
 }

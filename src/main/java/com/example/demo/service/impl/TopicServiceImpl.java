@@ -5,18 +5,14 @@ import com.example.demo.entity.TopicEntity;
 import com.example.demo.mapper.TopicMapper;
 import com.example.demo.repository.TopicRepository;
 import com.example.demo.service.TopicService;
-import io.lettuce.core.RedisConnectionException;
-import io.lettuce.core.RedisException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,9 +39,7 @@ public class TopicServiceImpl implements TopicService {
         try {
             List<Topic> topics = topicEntitiesMono.block();
             if (topics != null) {
-                topics.forEach(topic -> {
-                    topic.setService(service);
-                });
+                topics.forEach(topic -> topic.setService(service));
             }
             log.debug("{} topics: {}", service, topics);
             return topics;
@@ -67,7 +61,8 @@ public class TopicServiceImpl implements TopicService {
 
             Iterable<TopicEntity> topicEntitiesCached = topicRepository.saveAll(topicEntitiesToCache);
             log.debug("Topics cached: {}", topicEntitiesCached);
-        } catch (RedisConnectionFailureException | RedisException e) {
+//        } catch (RedisConnectionFailureException | RedisException e) {
+        } catch (Exception e) {
             log.error("Could not add topics to cache", e);
             throw e;
         }
@@ -80,7 +75,8 @@ public class TopicServiceImpl implements TopicService {
             final List<Topic> topics = topicMapper.topicEntityToTopic(topicEntities);
             log.info("gateway topics {}", topics);
             return topics;
-        } catch (RedisConnectionFailureException | RedisException e) {
+//        } catch (RedisConnectionFailureException | RedisException e) {
+        } catch (Exception e) {
             log.error("Could not get topics from cache", e);
             return new ArrayList<>();
         }

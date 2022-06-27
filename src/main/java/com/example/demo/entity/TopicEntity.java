@@ -1,13 +1,16 @@
 package com.example.demo.entity;
 
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
 
-@RedisHash
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.io.Serializable;
+//import org.springframework.data.redis.core.RedisHash;
+
+//@RedisHash
+@Entity
 @Getter
 @Setter
 @ToString

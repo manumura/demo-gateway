@@ -1,6 +1,5 @@
 package com.example.demo.properties;
 
-import com.example.demo.dto.Client;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,4 +14,5 @@ import java.util.List;
 public class ApplicationProperties {
 
     private List<Client> clients;
+    private Token token;
 }

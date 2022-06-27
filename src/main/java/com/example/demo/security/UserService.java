@@ -1,6 +1,6 @@
 package com.example.demo.security;
 
-import com.example.demo.common.AuthenticatedUserData;
+import com.example.demo.dto.AuthenticatedUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -11,10 +11,10 @@ import java.util.List;
 @Service
 public class UserService {
 
-    public Mono<AuthenticatedUserData> getUserDetails(final String username) {
+    public Mono<AuthenticatedUser> getUserDetails(final String username) {
         // TODO : hardcode for testing
         if ("manumura".equals(username)) {
-            return Mono.just(AuthenticatedUserData.builder()
+            return Mono.just(AuthenticatedUser.builder()
                     .uuid("1")
                     .username("manumura")
                     .firstName("manu")
@@ -26,7 +26,7 @@ public class UserService {
                     .build());
         }
         if ("manumura-admin".equals(username)) {
-            return Mono.just(AuthenticatedUserData.builder()
+            return Mono.just(AuthenticatedUser.builder()
                     .uuid("1")
                     .username("manumura-admin")
                     .firstName("manu")
@@ -38,7 +38,7 @@ public class UserService {
                     .build());
         }
         if ("manumura-super-admin".equals(username)) {
-            return Mono.just(AuthenticatedUserData.builder()
+            return Mono.just(AuthenticatedUser.builder()
                     .uuid("1")
                     .username("manumura-super-admin")
                     .firstName("manu")

@@ -10,8 +10,6 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
-import org.springframework.security.web.server.util.matcher.NegatedServerWebExchangeMatcher;
-import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
@@ -32,7 +30,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, CustomAuthenticationEntryPoint authenticationEntryPoint) {
         // Disable login form
         http
                 .httpBasic().disable()
@@ -55,7 +53,10 @@ public class WebSecurityConfig {
                 .permitAll()
 
                 .and()
-                .addFilterAt(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHORIZATION)
+                .addFilterAt(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .and()
                 .authorizeExchange()
                 .pathMatchers("/admin/**")
                 .hasAnyAuthority("ADMIN", "SUPER-ADMIN")

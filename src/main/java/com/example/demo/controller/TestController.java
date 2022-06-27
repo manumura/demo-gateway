@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.common.UserData;
+import com.example.demo.dto.User;
 import com.example.demo.dto.Topic;
 import com.example.demo.service.TopicService;
 import lombok.RequiredArgsConstructor;
@@ -43,37 +43,37 @@ public class TestController {
 
   // TODO test
   @GetMapping("/user")
-  public ResponseEntity<UserData> user(Principal principal) {
+  public ResponseEntity<User> user(Principal principal) {
 
     System.out.println("authenticated user: " + getUserFromSecurityContext());
 
     System.out.println("principal: " + principal);
 
-    UserData user = getUserDataFromPrincipal(principal);
+    User user = getUserDataFromPrincipal(principal);
     System.out.println("user: " + user);
 
     return ResponseEntity.ok(user);
   }
 
   @GetMapping("/user2")
-  public Mono<UserData> user2() {
+  public Mono<User> user2() {
 
     return ReactiveSecurityContextHolder.getContext()
         .map(SecurityContext::getAuthentication)
         .map(Authentication::getPrincipal)
-        .cast(UserData.class)
+        .cast(User.class)
         .doOnNext(user -> {
           System.out.println("user2 " + user);
         });
   }
 
-  private UserData getUserDataFromPrincipal(Principal principal) {
-    UserData user = null;
+  private User getUserDataFromPrincipal(Principal principal) {
+    User user = null;
     if (principal instanceof UsernamePasswordAuthenticationToken) {
       UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
 
-      if (token.getPrincipal() instanceof UserData) {
-        user = (UserData) token.getPrincipal();
+      if (token.getPrincipal() instanceof User) {
+        user = (User) token.getPrincipal();
       }
     }
     return user;

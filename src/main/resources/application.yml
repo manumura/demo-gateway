@@ -4,13 +4,18 @@ server:
 
 spring:
   application:
-    name: demo-gateway-client1
+    name: demo-gateway
   redis:
     database: 0
     host: localhost
     port: 6379
     timeout: 60000
     password: mypass
+  datasource:
+    url: jdbc:h2:mem:demoGatewayDb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
 
 application:
   clients:
@@ -20,6 +25,9 @@ application:
     -
       name: demo-gateway-client2
       url: http://localhost:8082
+  token:
+    salt: 012345678901234567890123456789ab
+    expiryInSec: 300
 
 management:
   endpoint:

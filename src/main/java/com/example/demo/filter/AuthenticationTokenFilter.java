@@ -1,6 +1,7 @@
 package com.example.demo.filter;
 
-import com.example.demo.common.UserData;
+import com.example.demo.dto.User;
+import com.example.demo.security.InternalTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -14,30 +15,32 @@ import reactor.core.publisher.Mono;
 @Component
 public class AuthenticationTokenFilter implements GlobalFilter {
 
+    private final InternalTokenService internalTokenService;
+
+    public AuthenticationTokenFilter(InternalTokenService internalTokenService) {
+        this.internalTokenService = internalTokenService;
+    }
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         return exchange.getPrincipal()
-//                .map(Principal::getName)
-                .map(p -> {
-//                    System.out.println("principal: " + p);
-                    if (p instanceof UsernamePasswordAuthenticationToken) {
-                        UsernamePasswordAuthenticationToken t = (UsernamePasswordAuthenticationToken) p;
-                        if (t.getPrincipal() instanceof UserData) {
-                            UserData u = (UserData) t.getPrincipal();
-                            System.out.println("user: " + u);
-                        }
+                .mapNotNull(p -> {
+                    if (p instanceof UsernamePasswordAuthenticationToken
+                            && ((UsernamePasswordAuthenticationToken) p).getPrincipal() instanceof User) {
+                        return  (User) ((UsernamePasswordAuthenticationToken) p).getPrincipal();
                     }
-                    return p.getName();
+                    return null;
                 })
-                .map(username -> withBearerAuth(exchange, username))
+                .map(user -> withBearerAuth(exchange, user))
                 .defaultIfEmpty(exchange).flatMap(chain::filter);
     }
 
-    private ServerWebExchange withBearerAuth(ServerWebExchange exchange, String username) {
+    private ServerWebExchange withBearerAuth(ServerWebExchange exchange, User user) {
+        String token = internalTokenService.generateToken(user);
+        internalTokenService.decodeToken(token);
         return exchange.mutate()
                 .request(r -> r.headers(headers -> {
-                    headers.add("X-client-name", username);
-                    headers.set(HttpHeaders.AUTHORIZATION, "Bearer test");
+                    headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
                 }))
                 .build();
     }

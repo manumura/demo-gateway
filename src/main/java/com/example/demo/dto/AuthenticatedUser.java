@@ -1,4 +1,4 @@
-package com.example.demo.common;
+package com.example.demo.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonInclude(Include.NON_NULL)
-public class AuthenticatedUserData {
+public class AuthenticatedUser {
 
   private String uuid;
   private String username;

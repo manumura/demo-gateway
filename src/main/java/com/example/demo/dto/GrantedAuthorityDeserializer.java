@@ -1,4 +1,4 @@
-package com.example.demo.common;
+package com.example.demo.dto;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;

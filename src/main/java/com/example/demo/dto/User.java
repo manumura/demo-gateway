@@ -1,20 +1,17 @@
-package com.example.demo.common;
+package com.example.demo.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 @Getter
 @Setter
-public class UserData extends User {
+public class User extends org.springframework.security.core.userdetails.User {
 
   private String uuid;
   private String username;
@@ -24,7 +21,7 @@ public class UserData extends User {
   private String phoneNumber;
   private Boolean enabled;
 
-  public UserData() {
+  public User() {
     super(" ", "", Collections.emptyList());
   }
 
@@ -34,10 +31,8 @@ public class UserData extends User {
     return super.getAuthorities();
   }
 
-  // TODO
-//  @Builder
-  public UserData(String username, String password, Collection<? extends GrantedAuthority> authorities,
-      String uuid, String firstName, String lastName, String email, String phoneNumber, Boolean enabled) {
+  public User(String username, String password, Collection<? extends GrantedAuthority> authorities,
+              String uuid, String firstName, String lastName, String email, String phoneNumber, Boolean enabled) {
     super(username, password, authorities);
     this.uuid = uuid;
     this.username = username;
@@ -50,7 +45,7 @@ public class UserData extends User {
 
   @Override
   public String toString() {
-    return "UserData{" +
+    return "User{" +
         "uuid='" + uuid + '\'' +
         ", username='" + username + '\'' +
         ", firstName='" + firstName + '\'' +
