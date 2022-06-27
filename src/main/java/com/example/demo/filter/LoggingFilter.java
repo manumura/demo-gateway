@@ -3,6 +3,8 @@ package com.example.demo.filter;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
+
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -16,10 +18,9 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.G
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR;
 
+@Slf4j
 @Component
 public class LoggingFilter implements GlobalFilter {
-
-  final Logger logger = LoggerFactory.getLogger(getClass());
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -27,7 +28,7 @@ public class LoggingFilter implements GlobalFilter {
     String originalUri = (uris.isEmpty()) ? "Unknown" : uris.iterator().next().toString();
     Route route = exchange.getAttribute(GATEWAY_ROUTE_ATTR);
     URI routeUri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
-    logger.info("Incoming request {} is routed to id: {}, uri: {}", originalUri, route.getId(), routeUri);
+    log.info("Incoming request {} is routed to id: {}, uri: {}", originalUri, route.getId(), routeUri);
     return chain.filter(exchange);
   }
 }

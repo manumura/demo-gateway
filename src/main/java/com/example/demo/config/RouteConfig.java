@@ -1,18 +1,15 @@
 package com.example.demo.config;
 
+import com.example.demo.dto.Client;
 import com.example.demo.dto.Topic;
+import com.example.demo.properties.ApplicationProperties;
 import com.example.demo.service.TopicService;
-import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.RedisConnectionFailureException;
-import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,42 +20,54 @@ public class RouteConfig {
 
   private static final String TOPIC_HEADER_NAME = "topic";
 
-  @Value("${client.demo-gateway-client1.url}")
-  private String SERVICE1_URL;
+  private final ApplicationProperties applicationProperties;
 
-  @Value("${client.demo-gateway-client2.url}")
-  private String SERVICE2_URL;
+  public RouteConfig(ApplicationProperties applicationProperties) {
+    this.applicationProperties = applicationProperties;
+  }
 
   @Bean
   public RouteLocator routes(RouteLocatorBuilder builder, TopicService topicService) {
 
-    List<Topic> topics = new ArrayList<>();
-
-    List<String> services = List.of(SERVICE1_URL, SERVICE2_URL);
-    for (String service: services) {
-      try {
-        List<Topic> t = topicService.getTopicsByService(service);
-        if (t != null) {
-          t.forEach(topic -> {
-            topic.setService(service);
-          });
-          log.debug("client {} topics: {}", service, t);
-          topics.addAll(t);
-        }
-      } catch (Exception e) {
-        log.error("Cannot get topics from " + service);
-      }
-    }
-
-    // TODO implement retry
-    if (CollectionUtils.isEmpty(topics)) {
-      throw new RuntimeException("No topics found, cannot build routes !!");
+    if (applicationProperties == null || CollectionUtils.isEmpty(applicationProperties.getClients())) {
+      log.error("clients properties not found");
+      return builder.routes().build();
     }
 
     RouteLocatorBuilder.Builder routeLocatorBuilder = builder.routes();
 
+    List<Topic> topics = new ArrayList<>();
+    for (Client client : applicationProperties.getClients()) {
+      // Path-based based route
+      log.debug("Creating route: path {} -> {}", client.getName(), client.getUrl());
+      routeLocatorBuilder.route(r -> r.path("/" + client.getName() + "/**")
+              // strip prefix
+//              .filters(f -> f.stripPrefix(1))
+              .filters(f -> f.rewritePath("^/" + client.getName(), ""))
+              .uri(client.getUrl()));
+
+      try {
+        List<Topic> t = topicService.getTopicsByService(client.getUrl());
+        if (t != null) {
+          t.forEach(topic -> {
+            topic.setService(client.getUrl());
+          });
+          log.debug("client {} topics: {}", client.getUrl(), t);
+          topics.addAll(t);
+        }
+      } catch (Exception e) {
+        log.error("Cannot get topics from " + client.getUrl());
+      }
+    }
+
+    // TODO implement retry
+//    if (CollectionUtils.isEmpty(topics)) {
+//      throw new RuntimeException("No topics found, cannot build routes !!");
+//    }
+
     for (Topic topic : topics) {
-      log.debug("Creating route: {} {}", topic.getCode(), topic.getService());
+      // Path and header based route
+      log.debug("Creating route for config: topic header {} {}", topic.getCode(), topic.getService());
       routeLocatorBuilder.route(r -> r.path("/config/**")
           .and().header(TOPIC_HEADER_NAME, topic.getCode())
           .uri(topic.getService()));
@@ -72,19 +81,4 @@ public class RouteConfig {
 
     return routeLocatorBuilder.build();
   }
-
-//  @Bean
-//  public GlobalFilter globalAuthenticationFilter() {
-//    return (exchange, chain) -> {
-//      System.out.println("First Global filter");
-//      return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-//        System.out.println("Second Global filter");
-//      }));
-//    };
-//  }
-
-//  @Bean
-//  public HttpClient httpClient() {
-//    return HttpClient.create().wiretap("LoggingFilter", LogLevel.INFO, AdvancedByteBufFormat.TEXTUAL);
-//  }
 }

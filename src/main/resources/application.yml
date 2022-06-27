@@ -5,13 +5,6 @@ server:
 spring:
   application:
     name: demo-gateway-client1
-#  cloud:
-#    gateway:
-#      routes:
-#        - id: predicate_route
-#          uri: http://localhost:8080/test
-#          predicates:
-#            - Path=/topics/{topicName}
   redis:
     database: 0
     host: localhost
@@ -19,11 +12,14 @@ spring:
     timeout: 60000
     password: mypass
 
-client:
-  demo-gateway-client1:
-    url: http://localhost:8081
-  demo-gateway-client2:
-    url: http://localhost:8082
+application:
+  clients:
+    -
+      name: demo-gateway-client1
+      url: http://localhost:8081
+    -
+      name: demo-gateway-client2
+      url: http://localhost:8082
 
 management:
   endpoint:

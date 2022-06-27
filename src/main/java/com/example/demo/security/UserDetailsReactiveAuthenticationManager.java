@@ -28,7 +28,7 @@ public class UserDetailsReactiveAuthenticationManager implements ReactiveAuthent
     return Mono.just(authentication)
         .switchIfEmpty(Mono.defer(this::raiseBadCredentialsException))
         .cast(UsernamePasswordAuthenticationToken.class)
-        .flatMap(this::authenticateToken)
+        .flatMap(this::findUserDetails)
         .publishOn(Schedulers.parallel())
         .onErrorResume(e -> raiseBadCredentialsException())
         .map(u -> new UsernamePasswordAuthenticationToken(u, Constant.NA, u.getAuthorities()));
@@ -38,15 +38,15 @@ public class UserDetailsReactiveAuthenticationManager implements ReactiveAuthent
     return Mono.error(new BadCredentialsException("Invalid token"));
   }
 
-  private Mono<UserDetails> authenticateToken(final UsernamePasswordAuthenticationToken authenticationToken) {
+  private Mono<UserDetails> findUserDetails(final UsernamePasswordAuthenticationToken authenticationToken) {
     String username = authenticationToken.getName();
-    log.info("checking authentication for user {}", username);
+    log.info("checking authentication for username {}", username);
 
     if (username != null) {
-      log.info("authenticated user {}, setting security context", username);
+      log.info("authenticated username {}, setting security context", username);
       return this.userDetailsService.findByUsername(username);
     }
 
-    return null;
+    return Mono.empty();
   }
 }

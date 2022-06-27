@@ -1,9 +1,10 @@
-package com.example.demo.config;
+package com.example.demo.filter;
 
 import com.example.demo.common.UserData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -11,7 +12,7 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
-public class GlobalAuthenticationFilter implements GlobalFilter {
+public class AuthenticationTokenFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -34,7 +35,10 @@ public class GlobalAuthenticationFilter implements GlobalFilter {
 
     private ServerWebExchange withBearerAuth(ServerWebExchange exchange, String username) {
         return exchange.mutate()
-                .request(r -> r.headers(headers -> headers.add("X-client-name", username)))
+                .request(r -> r.headers(headers -> {
+                    headers.add("X-client-name", username);
+                    headers.set(HttpHeaders.AUTHORIZATION, "Bearer test");
+                }))
                 .build();
     }
 }
