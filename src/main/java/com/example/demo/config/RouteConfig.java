@@ -3,6 +3,7 @@ package com.example.demo.config;
 import com.example.demo.properties.Client;
 import com.example.demo.dto.Topic;
 import com.example.demo.properties.ApplicationProperties;
+import com.example.demo.service.ClientTopicService;
 import com.example.demo.service.TopicService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,7 +28,7 @@ public class RouteConfig {
   }
 
   @Bean
-  public RouteLocator routes(RouteLocatorBuilder builder, TopicService topicService) {
+  public RouteLocator routes(RouteLocatorBuilder builder, ClientTopicService clientTopicService, TopicService topicService) {
 
     if (applicationProperties == null || CollectionUtils.isEmpty(applicationProperties.getClients())) {
       log.error("clients properties not found");
@@ -47,7 +48,7 @@ public class RouteConfig {
               .uri(client.getUrl()));
 
       try {
-        List<Topic> t = topicService.getTopicsByService(client.getUrl());
+        List<Topic> t = clientTopicService.getTopicsByService(client.getUrl());
         if (t != null) {
           t.forEach(topic -> {
             topic.setService(client.getUrl());
@@ -56,14 +57,10 @@ public class RouteConfig {
           topics.addAll(t);
         }
       } catch (Exception e) {
+        // TODO implement retry
         log.error("Cannot get topics from " + client.getUrl(), e);
       }
     }
-
-    // TODO implement retry
-//    if (CollectionUtils.isEmpty(topics)) {
-//      throw new RuntimeException("No topics found, cannot build routes !!");
-//    }
 
     for (Topic topic : topics) {
       // Path and header based route

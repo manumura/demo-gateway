@@ -10,6 +10,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
@@ -25,6 +26,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    // UserDetailsRepositoryReactiveAuthenticationManager
     public UserDetailsReactiveAuthenticationManager reactiveAuthenticationManager() {
         return new UserDetailsReactiveAuthenticationManager(reactiveUserDetailsService);
     }
@@ -73,8 +75,8 @@ public class WebSecurityConfig {
         final AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(reactiveAuthenticationManager());
         authenticationWebFilter.setServerAuthenticationConverter(new TokenAuthenticationConverter(
                 this.tokenUsernameExtractor));
-        // Stateless
-        authenticationWebFilter.setSecurityContextRepository(NoOpServerSecurityContextRepository.getInstance());
+        // Stateless: NoOpServerSecurityContextRepository
+        authenticationWebFilter.setSecurityContextRepository(new WebSessionServerSecurityContextRepository());
         return authenticationWebFilter;
     }
 }

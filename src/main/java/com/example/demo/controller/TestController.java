@@ -41,7 +41,6 @@ public class TestController {
     return ResponseEntity.ok("public endpoint reachable");
   }
 
-  // TODO test
   @GetMapping("/user")
   public ResponseEntity<User> user(Principal principal) {
 

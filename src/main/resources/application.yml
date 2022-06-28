@@ -26,7 +26,7 @@ application:
       name: demo-gateway-client2
       url: http://localhost:8082
   token:
-    salt: 012345678901234567890123456789ab
+    key: 012345678901234567890123456789ab
     expiryInSec: 300
 
 management:

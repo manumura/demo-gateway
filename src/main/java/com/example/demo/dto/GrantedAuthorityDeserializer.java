@@ -9,16 +9,18 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-public class GrantedAuthorityDeserializer extends JsonDeserializer {
+public class GrantedAuthorityDeserializer extends JsonDeserializer<Set<GrantedAuthority>> {
 
   @Override
-  public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+  public Set<GrantedAuthority> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
     ObjectCodec codec = jsonParser.getCodec();
     JsonNode jsonNode = codec.readTree(jsonParser);
-    Collection<GrantedAuthority> grantedAuthorities = new HashSet<>();
+    Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
     Iterator<JsonNode> elements = jsonNode.elements();
     while (elements.hasNext()) {

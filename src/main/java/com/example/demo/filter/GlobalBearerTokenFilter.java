@@ -13,11 +13,11 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
-public class AuthenticationTokenFilter implements GlobalFilter {
+public class GlobalBearerTokenFilter implements GlobalFilter {
 
     private final InternalTokenService internalTokenService;
 
-    public AuthenticationTokenFilter(InternalTokenService internalTokenService) {
+    public GlobalBearerTokenFilter(InternalTokenService internalTokenService) {
         this.internalTokenService = internalTokenService;
     }
 
@@ -37,7 +37,6 @@ public class AuthenticationTokenFilter implements GlobalFilter {
 
     private ServerWebExchange withBearerAuth(ServerWebExchange exchange, User user) {
         String token = internalTokenService.generateToken(user);
-        internalTokenService.decodeToken(token);
         return exchange.mutate()
                 .request(r -> r.headers(headers -> {
                     headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);

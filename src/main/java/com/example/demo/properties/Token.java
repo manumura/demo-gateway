@@ -9,6 +9,6 @@ import lombok.*;
 @ToString
 public class Token {
 
-    private String salt;
+    private String key;
     private int expiryInSec;
 }

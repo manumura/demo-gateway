@@ -23,9 +23,6 @@ public class TokenUsernameExtractor {
   }
 
   public Mono<Authentication> getAuthentication(String token) {
-
-    System.out.println("token: " + token);
-
     if (StringUtils.isBlank(token)) {
       return Mono.error(new BadCredentialsException("Invalid token"));
     }
