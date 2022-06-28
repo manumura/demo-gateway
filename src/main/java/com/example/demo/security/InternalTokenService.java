@@ -40,7 +40,7 @@ public class InternalTokenService {
         }
 
         if (StringUtils.length(applicationProperties.getToken().getKey()) != 32) {
-            log.error("token salt length incorrect");
+            log.error("token key length incorrect");
             return null;
         }
 
