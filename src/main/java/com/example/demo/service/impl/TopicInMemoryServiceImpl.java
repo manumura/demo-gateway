@@ -5,7 +5,6 @@ import com.example.demo.repository.InMemoryCache;
 import com.example.demo.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-@Primary
 public class TopicInMemoryServiceImpl implements TopicService {
 
     private final InMemoryCache inMemoryCache;

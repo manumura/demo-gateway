@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.security.Principal;
@@ -27,8 +28,7 @@ public class TestController {
 
   @GetMapping("/admin/config/topics")
   public ResponseEntity<List<Topic>> getTopics() {
-    final List<Topic> topics = topicService.getTopicsFromCache();
-    return ResponseEntity.ok(topics);
+    return ResponseEntity.ok(topicService.getTopicsFromCache());
   }
 
   @GetMapping("/super-admin/message")

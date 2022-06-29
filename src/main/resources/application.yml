@@ -19,12 +19,10 @@ spring:
 
 application:
   clients:
-    -
-      name: demo-gateway-client1
-      url: http://localhost:8081
-    -
-      name: demo-gateway-client2
-      url: http://localhost:8082
+    - name: demo-gateway-client1
+      url: ${DEMO_GATEWAY_CLIENT1_URL:http://localhost:8081}
+    - name: demo-gateway-client2
+      url: ${DEMO_GATEWAY_CLIENT2_URL:http://localhost:8082}
   token:
     key: 012345678901234567890123456789ab
     expiryInSec: 300

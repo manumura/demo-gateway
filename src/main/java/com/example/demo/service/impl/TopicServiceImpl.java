@@ -8,7 +8,9 @@ import com.example.demo.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +18,41 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@Primary
 public class TopicServiceImpl implements TopicService {
 
     private final TopicRepository topicRepository;
 
     private final TopicMapper topicMapper;
 
+
+//    @Override
+//    public void addTopicsToCache(List<Topic> topics) {
+//        List<TopicEntity> topicEntitiesToCache = topicMapper.topicToTopicEntity(topics);
+//
+//        // Delete all topics
+//        log.debug("Deleting topics from cache");
+//        topicRepository.deleteAll().flatMap(topicsDeleted -> {
+//            log.debug("Topics to add to cache: {}", topics);
+//            return topicRepository.saveAll(topicEntitiesToCache).then().doOnError(e -> {
+//                log.error("Could not add topics to cache", e);
+//            });
+//        }).doOnError(e -> {
+//            log.error("Could not delete topics from cache", e);
+//        });
+//    }
+//
+//    @Override
+//    public Flux<Topic> getTopicsFromCache() {
+//        return topicRepository.findAll()
+//                .map(topicEntity -> {
+//                    log.debug("topicEntity to map: {}", topicEntity);
+//                    return topicMapper.topicEntityToTopic(topicEntity);
+//                })
+//                .doOnError(e -> {
+//                    log.error("Could not get topics from cache", e);
+//                });
+//    }
 
     @Override
     public void addTopicsToCache(List<Topic> topics) {

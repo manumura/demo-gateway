@@ -9,7 +9,7 @@ import lombok.*;
 @ToString
 public class Topic {
 
-  private Integer id;
+  private String uuid;
   private String code;
   private String service;
 }

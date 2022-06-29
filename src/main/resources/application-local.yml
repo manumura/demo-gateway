@@ -6,12 +6,10 @@ spring:
     timeout: 60000
     username: default
     password: redispw
-
-client:
-  demo-gateway-client1:
-    url: http://localhost:8081
-  demo-gateway-client2:
-    url: http://localhost:8082
+#  h2:
+#    console:
+#      enabled: true
+#      path: /public/h2-console
 
 logging:
   level:
