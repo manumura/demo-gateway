@@ -66,7 +66,7 @@ public class RouteConfig {
                             .and()
                             .header(TOPIC_HEADER_NAME, topic.getCode())
                             .filters(f ->
-                                    // Test pre and post-filters (add header)
+                                    // Test pre-, post- and retry filters (add header)
                                     f.addRequestHeader("X-forwarded-to", topic.getCode())
                                             .addResponseHeader("X-forwarded-from", topic.getCode())
                                             .retry(retryConfig ->
