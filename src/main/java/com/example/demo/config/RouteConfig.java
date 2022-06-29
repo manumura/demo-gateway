@@ -1,8 +1,8 @@
 package com.example.demo.config;
 
-import com.example.demo.properties.Client;
 import com.example.demo.dto.Topic;
 import com.example.demo.properties.ApplicationProperties;
+import com.example.demo.properties.Client;
 import com.example.demo.service.ClientTopicService;
 import com.example.demo.service.TopicService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +24,11 @@ public class RouteConfig {
 
     private static final String TOPIC_HEADER_NAME = "topic";
 
-    private final ApplicationProperties applicationProperties;
-
-    public RouteConfig(ApplicationProperties applicationProperties) {
-        this.applicationProperties = applicationProperties;
-    }
-
     @Bean
-    public RouteLocator routes(RouteLocatorBuilder builder, ClientTopicService clientTopicService, TopicService topicService) {
+    public RouteLocator routes(RouteLocatorBuilder builder,
+                               ApplicationProperties applicationProperties,
+                               ClientTopicService clientTopicService,
+                               TopicService topicService) {
 
         if (applicationProperties == null || CollectionUtils.isEmpty(applicationProperties.getClients())) {
             log.error("clients properties not found");
