@@ -16,10 +16,10 @@ import reactor.core.publisher.Mono;
 @Component
 public class TokenUsernameExtractor {
 
-  private final TokenService tokenService;
+  private final TokenDecoderService tokenGeneratorService;
 
-  public TokenUsernameExtractor(TokenService tokenService) {
-    this.tokenService = tokenService;
+  public TokenUsernameExtractor(TokenDecoderService tokenGeneratorService) {
+    this.tokenGeneratorService = tokenGeneratorService;
   }
 
   public Mono<Authentication> getAuthentication(String token) {
@@ -27,7 +27,7 @@ public class TokenUsernameExtractor {
       return Mono.error(new BadCredentialsException("Invalid token"));
     }
 
-    Mono<String> usernameMono = tokenService.getUsernameFromToken(token);
+    Mono<String> usernameMono = tokenGeneratorService.getUsernameFromToken(token);
     return usernameMono
         .onErrorResume(e -> {
           log.warn(e.getMessage());

@@ -1,7 +1,7 @@
 package com.example.demo.filter;
 
 import com.example.demo.dto.User;
-import com.example.demo.security.InternalTokenService;
+import com.example.demo.security.TokenGeneratorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -15,10 +15,10 @@ import reactor.core.publisher.Mono;
 @Component
 public class GlobalBearerTokenFilter implements GlobalFilter {
 
-    private final InternalTokenService internalTokenService;
+    private final TokenGeneratorService tokenGeneratorService;
 
-    public GlobalBearerTokenFilter(InternalTokenService internalTokenService) {
-        this.internalTokenService = internalTokenService;
+    public GlobalBearerTokenFilter(TokenGeneratorService tokenGeneratorService) {
+        this.tokenGeneratorService = tokenGeneratorService;
     }
 
     @Override
@@ -36,11 +36,9 @@ public class GlobalBearerTokenFilter implements GlobalFilter {
     }
 
     private ServerWebExchange withBearerAuth(ServerWebExchange exchange, User user) {
-        String token = internalTokenService.generateToken(user);
+        String token = tokenGeneratorService.generateToken(user);
         return exchange.mutate()
-                .request(r -> r.headers(headers -> {
-                    headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-                }))
+                .request(r -> r.headers(headers -> headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token)))
                 .build();
     }
 }

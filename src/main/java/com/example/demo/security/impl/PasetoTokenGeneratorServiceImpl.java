@@ -1,11 +1,9 @@
-package com.example.demo.security;
+package com.example.demo.security.impl;
 
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.User;
 import com.example.demo.properties.ApplicationProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.paseto.jpaseto.Paseto;
-import dev.paseto.jpaseto.PasetoParser;
+import com.example.demo.security.TokenGeneratorService;
 import dev.paseto.jpaseto.Pasetos;
 import dev.paseto.jpaseto.lang.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +19,7 @@ import java.util.Set;
 
 @Slf4j
 @Service
-public class InternalTokenService {
+public class PasetoTokenGeneratorServiceImpl implements TokenGeneratorService {
 
     private static final String AUDIENCE = "internal";
     private static final String ISSUER = "gateway";
@@ -29,7 +27,7 @@ public class InternalTokenService {
 
     private final ApplicationProperties applicationProperties;
 
-    public InternalTokenService(ApplicationProperties applicationProperties) {
+    public PasetoTokenGeneratorServiceImpl(ApplicationProperties applicationProperties) {
         this.applicationProperties = applicationProperties;
     }
 

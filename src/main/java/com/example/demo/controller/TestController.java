@@ -38,7 +38,7 @@ public class TestController {
 
   @GetMapping("/public/message")
   public ResponseEntity<String> getMessage() {
-    return ResponseEntity.ok("public endpoint reachable");
+    return ResponseEntity.ok("public endpoint reachable in gateway");
   }
 
   @GetMapping("/user")

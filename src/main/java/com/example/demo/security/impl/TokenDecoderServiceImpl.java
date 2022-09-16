@@ -1,12 +1,13 @@
-package com.example.demo.security;
+package com.example.demo.security.impl;
 
+import com.example.demo.security.TokenDecoderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
-public class TokenService {
+public class TokenDecoderServiceImpl implements TokenDecoderService {
 
     public Mono<String> getUsernameFromToken(String token) {
         // TODO : hardcode for testing
