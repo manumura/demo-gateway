@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 public class TokenDecoderServiceImpl implements TokenDecoderService {
 
     public Mono<String> getUsernameFromToken(String token) {
+        System.err.println("token: " + token);
         // TODO : hardcode for testing
         if ("my-secret-token".equals(token)) {
             return Mono.just("manumura");

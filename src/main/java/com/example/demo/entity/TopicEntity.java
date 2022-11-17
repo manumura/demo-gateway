@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -7,8 +9,6 @@ import lombok.ToString;
 import java.io.Serializable;
 //import org.springframework.data.annotation.Id;
 //import org.springframework.data.redis.core.RedisHash;
-import javax.persistence.Entity;
-import javax.persistence.Id;
 
 //@RedisHash
 @Entity
