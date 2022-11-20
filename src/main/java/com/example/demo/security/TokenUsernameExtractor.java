@@ -27,7 +27,6 @@ public class TokenUsernameExtractor {
       return Mono.error(new BadCredentialsException("Invalid token"));
     }
 
-      System.err.println("token: " + token);
     Mono<String> usernameMono = tokenGeneratorService.getUsernameFromToken(token);
     return usernameMono
         .onErrorResume(e -> {

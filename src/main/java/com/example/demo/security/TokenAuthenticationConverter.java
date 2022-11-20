@@ -20,7 +20,6 @@ public class TokenAuthenticationConverter implements ServerAuthenticationConvert
 
   @Override
   public Mono<Authentication> convert(ServerWebExchange serverWebExchange) {
-    System.err.println("Test authentication");
     return Mono.justOrEmpty(serverWebExchange)
         .map(this::getTokenFromRequest)
         .filter(Objects::nonNull)
