@@ -58,6 +58,8 @@ public class PasetoTokenGeneratorServiceImpl implements TokenGeneratorService {
 
     public String generateInternalUserToken() {
         User user = new User("internal", Constant.NA, Set.of(new SimpleGrantedAuthority("INTERNAL")));
-        return generateToken(user);
+        String token = generateToken(user);
+        log.debug("paseto token for internal user: {}", token);
+        return token;
     }
 }

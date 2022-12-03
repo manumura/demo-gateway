@@ -5,17 +5,18 @@ server:
 spring:
   application:
     name: demo-gateway
-  redis:
-    database: 0
-    host: localhost
-    port: 6379
-    timeout: 60000
-    password: mypass
   datasource:
     url: jdbc:h2:mem:demoGatewayDb
     username: sa
     password: password
     driverClassName: org.h2.Driver
+  data:
+    redis:
+      database: 0
+      host: localhost
+      port: 6379
+      timeout: 60000
+      password: mypass
 
 application:
   clients:
@@ -42,8 +43,9 @@ management:
       exposure:
         include: health, info, metrics
   metrics:
-    export:
-      prometheus:
-        enabled: true
     tags:
       application: ${spring.application.name}
+  prometheus:
+    metrics:
+      export:
+        enabled: true

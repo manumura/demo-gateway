@@ -1,11 +1,12 @@
 spring:
-  redis:
-    database: 0
-    host: localhost
-    port: 49153
-    timeout: 60000
-    username: default
-    password: redispw
+  data:
+    redis:
+      database: 0
+      host: localhost
+      port: 49153
+      timeout: 60000
+      username: default
+      password: redispw
 #  h2:
 #    console:
 #      enabled: true
