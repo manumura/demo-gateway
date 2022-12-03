@@ -59,6 +59,7 @@ public class WebSecurityConfig {
                 .permitAll()
 
                 .and()
+                // addFilterAt
                 .addFilterBefore(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint)
