@@ -1,16 +1,15 @@
-FROM openjdk:11-jre-slim as builder
-WORKDIR application
+FROM eclipse-temurin:17 as builder
+WORKDIR /app
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
-#ADD maven/${project.build.finalName}.jar ./
-#RUN java -Djarmode=layertools -jar ${project.build.finalName}.jar extract
 
-FROM openjdk:11-jre-slim
-
-WORKDIR application
-COPY --from=builder application/dependencies/ ./
-COPY --from=builder application/spring-boot-loader/ ./
-COPY --from=builder application/snapshot-dependencies/ ./
-COPY --from=builder application/application/ ./
+FROM eclipse-temurin:17
+RUN useradd spring
+USER spring
+WORKDIR /app
+COPY --from=builder app/dependencies/ ./
+COPY --from=builder app/spring-boot-loader/ ./
+COPY --from=builder app/snapshot-dependencies/ ./
+COPY --from=builder app/application/ ./
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "org.springframework.boot.loader.JarLauncher"]
