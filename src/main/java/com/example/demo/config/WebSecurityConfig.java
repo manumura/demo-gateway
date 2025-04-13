@@ -34,43 +34,30 @@ public class WebSecurityConfig {
         return new UserDetailsReactiveAuthenticationManager(reactiveUserDetailsService);
     }
 
+    // https://stackoverflow.com/questions/78112501/sessionmanagement-and-csrf-cors-is-deprecated-since-version-6-1
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, CustomAuthenticationEntryPoint authenticationEntryPoint) {
         // Disable login form
         http
-                .httpBasic().disable()
-                .formLogin().disable()
-                .csrf().disable()
-                .logout().disable();
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .logout(ServerHttpSecurity.LogoutSpec::disable);
 
         // Custom security filter
         http
-                .authorizeExchange()
-                .pathMatchers(HttpMethod.OPTIONS)
-                .permitAll()
-
-                .and()
-                .authorizeExchange()
-                .matchers(EndpointRequest.to("health", "info", "metrics"))
-                .permitAll()
-
-                .pathMatchers(WHITELIST_ENDPOINTS)
-                .permitAll()
-
-                .and()
-                // addFilterAt
+                .authorizeExchange(exchange -> exchange
+                        .pathMatchers(HttpMethod.OPTIONS).permitAll()
+                        .matchers(EndpointRequest.to("health", "info", "metrics")).permitAll()
+                        .pathMatchers(WHITELIST_ENDPOINTS).permitAll()
+                        .pathMatchers("/admin/**").hasAnyAuthority("ADMIN", "SUPER-ADMIN")
+                        .pathMatchers("/super-admin/**").hasAuthority("SUPER-ADMIN")
+                        .anyExchange().authenticated()
+                )
                 .addFilterBefore(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
-                .exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPoint)
-                .and()
-                .authorizeExchange()
-                .pathMatchers("/admin/**")
-                .hasAnyAuthority("ADMIN", "SUPER-ADMIN")
-                .pathMatchers("/super-admin/**")
-                .hasAuthority("SUPER-ADMIN")
-
-                .anyExchange()
-                .authenticated();
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.authenticationEntryPoint(authenticationEntryPoint)
+                );
 
         return http.build();
     }
