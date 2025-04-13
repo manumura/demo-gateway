@@ -41,7 +41,7 @@ public class RouteConfig {
 
         for (Client client : applicationProperties.getClients()) {
             // Path-based route
-            log.debug("Creating route: path {} -> {}", client.getName(), client.getUrl());
+            log.info("Creating route: path {} -> {}", client.getName(), client.getUrl());
             routeLocatorBuilder.route(r -> r.path("/" + client.getName() + "/**")
                     // strip prefix
 //              .filters(f -> f.stripPrefix(1))
@@ -54,13 +54,13 @@ public class RouteConfig {
                     topics.addAll(t);
                 }
             } catch (Exception e) {
-                log.error("Cannot get topics from " + client.getUrl(), e);
+                log.error("Cannot get topics from {}", client.getUrl(), e);
             }
         }
 
         for (Topic topic : topics) {
             // Path and header based route
-            log.debug("Creating route for config: topic header {} {}", topic.getCode(), topic.getService());
+            log.info("Creating route for config: topic header {} {}", topic.getCode(), topic.getService());
             routeLocatorBuilder.route(r ->
                     r.path("/config/**")
                             .and()

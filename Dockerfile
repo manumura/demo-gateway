@@ -1,12 +1,12 @@
-FROM eclipse-temurin:17 as builder
+FROM amazoncorretto:24-alpine AS builder
 WORKDIR /app
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
-FROM eclipse-temurin:17
-RUN useradd spring
-USER spring
+FROM amazoncorretto:24-alpine
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
 WORKDIR /app
 COPY --from=builder app/dependencies/ ./
 COPY --from=builder app/spring-boot-loader/ ./

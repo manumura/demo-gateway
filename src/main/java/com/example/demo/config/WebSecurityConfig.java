@@ -11,7 +11,6 @@ import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
-import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 
 @Slf4j
@@ -22,7 +21,7 @@ public class WebSecurityConfig {
     private final ReactiveUserDetailsServiceImpl reactiveUserDetailsService;
     private final TokenUsernameExtractor tokenUsernameExtractor;
 
-    private static final String[] WHITELIST_ENDPOINTS = {"/public/**"};
+    private static final String[] WHITELIST_ENDPOINTS = {"/", "/public/**"};
 
     public WebSecurityConfig(ReactiveUserDetailsServiceImpl reactiveUserDetailsService, TokenUsernameExtractor tokenUsernameExtractor) {
         this.reactiveUserDetailsService = reactiveUserDetailsService;

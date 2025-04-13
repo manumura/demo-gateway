@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.User;
 import com.example.demo.dto.Topic;
+import com.example.demo.dto.User;
 import com.example.demo.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.security.Principal;
@@ -26,6 +25,11 @@ public class TestController {
 
   private final TopicService topicService;
 
+  @GetMapping("/")
+  public ResponseEntity<String> getIndex() {
+    return ResponseEntity.ok("welcome to the demo-gateway");
+  }
+
   @GetMapping("/admin/config/topics")
   public ResponseEntity<List<Topic>> getTopics() {
     return ResponseEntity.ok(topicService.getTopicsFromCache());
@@ -37,7 +41,7 @@ public class TestController {
   }
 
   @GetMapping("/public/message")
-  public ResponseEntity<String> getMessage() {
+  public ResponseEntity<String> getPublicMessage() {
     return ResponseEntity.ok("public endpoint reachable in gateway");
   }
 
@@ -61,17 +65,14 @@ public class TestController {
         .map(SecurityContext::getAuthentication)
         .map(Authentication::getPrincipal)
         .cast(User.class)
-        .doOnNext(user -> {
-          System.out.println("user2 " + user);
-        });
+        .doOnNext(user -> System.out.println("user2 " + user));
   }
 
   private User getUserDataFromPrincipal(Principal principal) {
     User user = null;
-    if (principal instanceof UsernamePasswordAuthenticationToken) {
-      UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) principal;
+    if (principal instanceof UsernamePasswordAuthenticationToken token) {
 
-      if (token.getPrincipal() instanceof User) {
+        if (token.getPrincipal() instanceof User) {
         user = (User) token.getPrincipal();
       }
     }
@@ -90,7 +91,6 @@ public class TestController {
       return null;
     }
 
-    Object user = authentication.getPrincipal();
-    return user;
+      return authentication.getPrincipal();
   }
 }

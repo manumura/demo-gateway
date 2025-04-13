@@ -2,9 +2,9 @@
 
 From layers
 
-``` docker build  -f ./Dockerfile -t demo-gateway . ```
+``` docker build -t manumura/demo-gateway:latest . ```
 
-``` docker run -p 8080:8080 -d --name demo-gateway demo-gateway ```
+``` docker run -p 8080:8080 -d --name demo-gateway manumura/demo-gateway ```
 
 ``` docker container logs demo-gateway -f ```
 
@@ -27,3 +27,9 @@ From layers
 ``` docker push manumura/demo-gateway:latest ```
 
 ``` docker run -p 8080:8080 -d --name demo-gateway manumura/demo-gateway ```
+
+# NOTES
+
+Users are hardcoded in UserService.java
+
+Tokens are hardcoded in TokenDecoderServiceImpl.java
